@@ -1,0 +1,7 @@
+# package folders
+node_modules
+
+# environment files
+.env
+
+# miscellaneous
