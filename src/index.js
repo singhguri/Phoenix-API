@@ -3,14 +3,14 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const route = require("./route/route.js");
 const multer = require("multer");
-const helmet = require("helmet");
+const cors = require("cors");
 const bcrypt = require("bcrypt");
 const app = express();
 
 // import dotenv
 require("dotenv").config();
 
-app.use(helmet());
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
