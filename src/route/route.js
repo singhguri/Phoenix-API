@@ -8,6 +8,8 @@ const middleware = require("../middleware/auth.js");
 router.post("/api/register", userController.register);
 // router.post("/api/Login", userController.login);
 router.post("/api/loginByOAuth", userController.loginByOAuth);
+router.get("/api/OAuthUsers", userController.getOAuthUsers);
+router.delete("/api/OAuthUsers/:userId", userController.deleteOauthUser);
 router.get(
   "/api/user/:userId/profile",
   middleware.auth,

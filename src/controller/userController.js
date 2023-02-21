@@ -161,7 +161,9 @@ const loginByOAuth = async (req, res) => {
         message: "Email is not verified, Please Verify before logging in.",
       });
 
-    const user = await UserModel.create(reqBody);
+    const data = { source: "OAuth", ...reqBody };
+
+    const user = await UserModel.create(data);
     return res
       .status(201)
       .send({ status: true, message: "success", data: user });
@@ -230,6 +232,35 @@ const login = async function (req, res) {
       status: true,
       message: `User login successfully`,
       data: { userId: match._id, token: token },
+    });
+  } catch (error) {
+    res.status(500).send({ status: false, message: error.message });
+  }
+};
+
+const getOAuthUsers = async (req, res) => {
+  try {
+    const users = await userModel.find({ source: "OAuth" });
+    res.status(200).send({
+      status: true,
+      data: { users },
+    });
+  } catch (error) {
+    res.status(500).send({ status: false, message: error.message });
+  }
+};
+
+const deleteOauthUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const user = await userModel.findOneAndUpdate(
+      { id: userId },
+      { isActive: false }
+    );
+
+    res.status(200).send({
+      status: true,
+      message: "User Deleted successfully.",
     });
   } catch (error) {
     res.status(500).send({ status: false, message: error.message });
@@ -395,4 +426,12 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getUserDetails, updateUser, loginByOAuth };
+module.exports = {
+  register,
+  login,
+  getUserDetails,
+  updateUser,
+  loginByOAuth,
+  getOAuthUsers,
+  deleteOauthUser,
+};

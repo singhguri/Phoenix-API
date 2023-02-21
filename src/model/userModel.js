@@ -36,6 +36,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
+    source: {
+      type: String,
+      required: true,
+      default: "system",
+    },
+    isActive: {
+      type: Boolean,
+      required: true,
+      default: true,
+    },
     // password: {
     //   type: String,
     //   required: true,
