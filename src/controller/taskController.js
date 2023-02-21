@@ -1,6 +1,6 @@
-const TaskModel = require("src/model/taskModel");
+const TaskModel = require("../model/taskModel");
 const mongoose = require("mongoose");
-const validator = require("src/validator/validator");
+const validator = require("../validator/validator");
 
 const getAllTasks = async (req, res) => {
   try {
