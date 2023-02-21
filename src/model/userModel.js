@@ -2,12 +2,21 @@ const mongoose = require("mongoose");
 
 const userSchema = new mongoose.Schema(
   {
-    fname: {
+    id: {
+      type: String,
+      required: true,
+    },
+    family_name: {
       type: String,
       required: true,
       trim: true,
     },
-    lname: {
+    given_name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    name: {
       type: String,
       required: true,
       trim: true,
@@ -19,14 +28,18 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
+    verified_email: {
+      type: Boolean,
+      require: true,
+    },
     profileImage: {
       type: String,
       required: false,
     },
-    password: {
-      type: String,
-      required: true,
-    }, // encrypted password
+    // password: {
+    //   type: String,
+    //   required: true,
+    // }, // encrypted password
   },
   { timestamps: true }
 );

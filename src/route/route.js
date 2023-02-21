@@ -6,7 +6,8 @@ const middleware = require("../middleware/auth.js");
 
 // UserModel APIs
 router.post("/api/register", userController.register);
-router.post("/api/Login", userController.login);
+// router.post("/api/Login", userController.login);
+router.post("/api/loginByOAuth", userController.loginByOAuth);
 router.get(
   "/api/user/:userId/profile",
   middleware.auth,

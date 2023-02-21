@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("../validator/validator");
+const userModel = require("../model/userModel");
 
 //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -142,6 +143,30 @@ const register = async (req, res) => {
       .send({ status: true, message: "success", data: user });
   } catch (err) {
     res.status(500).send({ status: false, message: err.message });
+  }
+};
+
+const loginByOAuth = async (req, res) => {
+  try {
+    const reqBody = req.body;
+    if (!reqBody)
+      res.status(400).send({
+        status: false,
+        message: "Invalid request parameters, Please provide login details.",
+      });
+
+    if (!reqBody.verified_email)
+      res.status(400).send({
+        status: false,
+        message: "Email is not verified, Please Verify before logging in.",
+      });
+
+    const user = await UserModel.create(reqBody);
+    return res
+      .status(201)
+      .send({ status: true, message: "success", data: user });
+  } catch (error) {
+    res.status(500).send({ status: false, message: error.message });
   }
 };
 
@@ -370,4 +395,4 @@ const updateUser = async (req, res) => {
   }
 };
 
-module.exports = { register, login, getUserDetails, updateUser };
+module.exports = { register, login, getUserDetails, updateUser, loginByOAuth };
