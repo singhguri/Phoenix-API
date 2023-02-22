@@ -275,7 +275,6 @@ const deleteOauthUser = async (req, res) => {
   }
 };
 
-// -----------get Profile Data-----------------------------------------------------------------------------------
 const getUserDetails = async function (req, res) {
   try {
     const userIdfromParams = req.params.userId;
