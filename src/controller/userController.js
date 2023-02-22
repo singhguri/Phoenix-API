@@ -163,9 +163,9 @@ const loginByOAuth = async (req, res) => {
     const oldUser = UserModel.find({ email: reqBody.email });
 
     if (oldUser)
-      return res.status(400).send({
-        status: false,
-        message: "User already exists. Please log in.",
+      return res.status(200).send({
+        status: true,
+        message: "User Exists. Please log in.",
       });
     else {
       const data = { source: "OAuth", ...reqBody };
