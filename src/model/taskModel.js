@@ -23,6 +23,11 @@ const taskSchema = new mongoose.Schema(
       default: 10,
       trim: true,
     },
+    taskSize: {
+      type: String,
+      required: true,
+      default: "small",
+    },
     taskAddUserId: {
       type: mongoose.Types.ObjectId,
       required: false,
