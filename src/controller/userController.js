@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const validator = require("../validator/validator");
-const userModel = require("../model/userModel");
 
 //--------------------------------------------------------------------------------------------------------------------------------------
 
@@ -161,12 +160,21 @@ const loginByOAuth = async (req, res) => {
         message: "Email is not verified, Please Verify before logging in.",
       });
 
-    const data = { source: "OAuth", ...reqBody };
+    const oldUser = UserModel.find({ email: reqBody.email });
 
-    const user = await UserModel.create(data);
-    return res
-      .status(201)
-      .send({ status: true, message: "success", data: user });
+    if (oldUser)
+      return res.status(400).send({
+        status: false,
+        message: "User already exists. Please log in.",
+      });
+    else {
+      const data = { source: "OAuth", ...reqBody };
+
+      const user = await UserModel.create(data);
+      return res
+        .status(201)
+        .send({ status: true, message: "User first log in successful." });
+    }
   } catch (error) {
     res.status(500).send({ status: false, message: error.message });
   }
