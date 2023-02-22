@@ -248,7 +248,7 @@ const login = async function (req, res) {
 
 const getOAuthUsers = async (req, res) => {
   try {
-    const users = await userModel.find({ source: "OAuth" });
+    const users = await UserModel.find({ source: "OAuth" });
     res.status(200).send({
       status: true,
       data: { users },
