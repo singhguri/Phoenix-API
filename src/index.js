@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const route = require("./route/route.js");
 const multer = require("multer");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
 const app = express();
 
 // import dotenv
