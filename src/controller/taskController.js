@@ -1,6 +1,5 @@
 const TaskModel = require("../model/taskModel");
 const mongoose = require("mongoose");
-const validator = require("../validator/validator");
 
 const getAllTasks = async (req, res) => {
   try {
@@ -12,13 +11,27 @@ const getAllTasks = async (req, res) => {
   }
 };
 
+const getRandomNumberedTasks = async (length) => {
+  try {
+    let data = [];
+    const tasks = await TaskModel.find({});
+    if (tasks)
+      for (let index = 0; index < length; index++)
+        data.push(tasks[Math.floor(Math.random() * tasks.length)]);
+
+    return data;
+  } catch (error) {
+    return error.message;
+  }
+};
+
 const getTasksByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    if (!validator.isValidObjectId(userId))
-      return res
-        .status(400)
-        .send({ status: false, message: "Please provide valid ID" });
+    // if (!validator.isValidObjectId(userId))
+    return res
+      .status(400)
+      .send({ status: false, message: "Please provide valid ID" });
 
     const Tasks = await TaskModel.find({ taskAddUserId: userId });
 
@@ -31,7 +44,7 @@ const getTasksByUserId = async (req, res) => {
 const getTaskById = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!validator.isValidObjectId(id))
+    if (!id)
       return res
         .status(400)
         .send({ status: false, message: "Please provide valid ID" });
@@ -61,10 +74,10 @@ const insertTask = async (req, res) => {
 const updateTask = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!validator.isValidObjectId(id))
-      return res
-        .status(400)
-        .send({ status: false, message: "Please provide valid ID" });
+    // if (!validator.isValidObjectId(id))
+    return res
+      .status(400)
+      .send({ status: false, message: "Please provide valid ID" });
 
     const data = req.body;
 
@@ -81,10 +94,10 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   try {
     const { id } = req.params;
-    if (!validator.isValidObjectId(id))
-      return res
-        .status(400)
-        .send({ status: false, message: "Please provide valid ID" });
+    // if (!validator.isValidObjectId(id))
+    return res
+      .status(400)
+      .send({ status: false, message: "Please provide valid ID" });
 
     const Task = await TaskModel.findByIdAndDelete(id);
 
@@ -98,6 +111,7 @@ const deleteTask = async (req, res) => {
 
 module.exports = {
   getAllTasks,
+  getRandomNumberedTasks,
   getTasksByUserId,
   getTaskById,
   insertTask,

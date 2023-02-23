@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema(
     id: {
       type: String,
       required: true,
+      unique: true,
     },
     family_name: {
       type: String,
@@ -45,6 +46,15 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       required: true,
       default: true,
+    },
+    coins: {
+      type: Number,
+      required: false,
+      default: 0,
+    },
+    gender: {
+      type: String,
+      required: false,
     },
     // password: {
     //   type: String,
