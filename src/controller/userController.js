@@ -61,7 +61,7 @@ const loginByOAuth = async (req, res) => {
         .send({ status: true, message: "User first log in successful." });
     }
   } catch (error) {
-    console.log({ error });
+    console.log(req.body);
     res.status(500).send({ status: false, message: error.message });
   }
 };
