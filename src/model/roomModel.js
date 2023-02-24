@@ -16,7 +16,7 @@ const roomSchema = new mongoose.Schema(
       required: false,
     },
     tasks: {
-      type: Array,
+      type: [Object],
       required: false,
     },
     requiredCoins: {

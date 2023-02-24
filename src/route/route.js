@@ -16,12 +16,16 @@ router.get("/api/tasks", taskController.getAllTasks);
 router.get("/api/tasks/:id", taskController.getTaskById);
 router.get("/api/tasks/:userId", taskController.getTasksByUserId);
 router.post("/api/tasks", taskController.insertTask);
+router.post("/api/tasks/bulk", taskController.insertTaskBulk);
+
 router.put("/api/tasks/:id", taskController.updateTask);
 router.delete("/api/tasks/:id", taskController.deleteTask);
 
 // RoomModel APIs
+router.get("/api/rooms", roomController.getAllRooms);
 router.post("/api/room/create", roomController.createRoom);
-router.get("/api/tasks/:roomId", roomController.getRoomTasks);
+router.get("/api/room/:roomId", roomController.getRoomById);
+router.delete("/api/room/:roomId", roomController.deleteRoom);
 
 // if api is invalid OR wrong URL
 router.all("/**", function (req, res) {

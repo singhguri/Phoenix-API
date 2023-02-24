@@ -25,7 +25,7 @@ const taskSchema = new mongoose.Schema(
     },
     taskSize: {
       type: String,
-      required: true,
+      required: false,
       default: "small",
     },
     taskAddUserId: {
