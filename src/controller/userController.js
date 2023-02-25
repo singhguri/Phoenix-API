@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 
 //--------------------------------------------------------------------------------------------------------------------------------------
 
-//name validation name can only contain [a-z],[A-Z]and space
+//name validation name can only contain [a-z], [A-Z]and space
 const validateName = (name) => {
   return String(name)
     .trim()
