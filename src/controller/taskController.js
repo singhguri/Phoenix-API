@@ -12,10 +12,10 @@ const getAllTasks = async (req, res) => {
   }
 };
 
-const getRandomNumberedTasks = async (length) => {
+const getRandomNumberedTasks = async (length, type) => {
   try {
     let data = [];
-    const tasks = await TaskModel.find({});
+    const tasks = await TaskModel.find({ taskType: { $ne: type } });
     if (tasks)
       for (let index = 0; index < length; index++) {
         const val = tasks[Math.floor(Math.random() * tasks.length)];

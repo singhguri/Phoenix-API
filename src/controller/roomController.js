@@ -62,7 +62,7 @@ const createRoom = async (req, res) => {
 
     const body = req.body;
 
-    const randTasks = await getRandomNumberedTasks(body.taskNo);
+    const randTasks = await getRandomNumberedTasks(body.taskNo, body.taskType);
 
     const roomInfo = await RoomModel.create({
       hostUserId: body.hostUserId,

@@ -53,6 +53,8 @@ const loginByOAuth = async (req, res) => {
         message: "User Exists. Please log in.",
       });
     else {
+      if (reqBody.hasOwnProperty("locale")) delete s.locale;
+
       const data = { source: "OAuth", ...reqBody };
 
       const user = await UserModel.create(data);
