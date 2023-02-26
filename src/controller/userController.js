@@ -70,7 +70,7 @@ const loginByOAuth = async (req, res) => {
 
 const getOAuthUsers = async (req, res) => {
   try {
-    const users = await UserModel.find({ source: "OAuth" });
+    const users = await UserModel.find({});
     res.status(200).send({
       status: true,
       data: { users },
