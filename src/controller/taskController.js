@@ -104,6 +104,7 @@ const insertTaskBulk = async (req, res) => {
     return res.status(200).send({
       status: true,
       message: "Tasks added successfully.",
+      successTasks: successTasks,
       errorTasks: errTasks,
     });
   } catch (error) {

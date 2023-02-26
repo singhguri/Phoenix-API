@@ -15,9 +15,14 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(multer().any());
 
+const mongoURL =
+  process.env.NODE_ENV === "prod"
+    ? process.env.MONGO_URL_PROD
+    : process.env.MONGO_URL_DEV;
+
 mongoose.set("strictQuery", false);
 mongoose
-  .connect(process.env.MONGO_URL, {
+  .connect(mongoURL, {
     useNewUrlParser: true,
   })
   .then(() => console.log("MongoDb is connected"))

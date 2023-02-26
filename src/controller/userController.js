@@ -53,8 +53,6 @@ const loginByOAuth = async (req, res) => {
         message: "User Exists. Please log in.",
       });
     else {
-      if (reqBody.hasOwnProperty("locale")) delete s.locale;
-
       const data = { source: "OAuth", ...reqBody };
 
       const user = await UserModel.create(data);
@@ -87,9 +85,10 @@ const getOAuthUserById = async (req, res) => {
       const user = await UserModel.find({ id: userId });
       return res.status(200).send({ status: true, message: user });
     } else
-      return res
-        .status(400)
-        .send({ status: false, message: "User with this id does not exist." });
+      return res.status(400).send({
+        status: false,
+        message: "Invalid request parameters, Please provide valid userId.",
+      });
   } catch (error) {
     res.status(500).send({ status: false, message: error.message });
   }
@@ -144,6 +143,7 @@ const changeUserCoins = async (req, res) => {
         .send({ status: false, message: "User with this id does not exist." });
     }
   } catch (error) {
+    console.log(req.body);
     res.status(500).send({ status: false, message: error.message });
   }
 };
