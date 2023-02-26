@@ -73,7 +73,7 @@ const getOAuthUsers = async (req, res) => {
     const users = await UserModel.find({});
     res.status(200).send({
       status: true,
-      data: { users },
+      message: users,
     });
   } catch (error) {
     res.status(500).send({ status: false, message: error.message });
