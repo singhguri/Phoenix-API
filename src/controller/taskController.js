@@ -17,7 +17,8 @@ const getRandomNumberedTasks = async (length, type) => {
     let data = [];
     const tasks = await TaskModel.find({ taskType: { $ne: type } });
     if (tasks)
-      for (let index = 0; index < length; index++) {
+      // for (let index = 0; index < length; index++)
+      while (data.length !== length) {
         const val = tasks[Math.floor(Math.random() * tasks.length)];
         if (!data.includes(val)) data.push(val);
       }
