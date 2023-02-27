@@ -14,16 +14,16 @@ const getAllTasks = async (req, res) => {
 
 const getRandomNumberedTasks = async (length, type) => {
   try {
-    let data = [];
-    const tasks = await TaskModel.find({ taskType: { $ne: type } });
-    if (tasks)
-      // for (let index = 0; index < length; index++)
-      while (data.length !== length) {
-        const val = tasks[Math.floor(Math.random() * tasks.length)];
-        if (!data.includes(val)) data.push(val);
-      }
+    const tasks = await TaskModel.aggregate([
+      {
+        $match: {
+          taskType: { $ne: type },
+        },
+      },
+      { $sample: { size: length } },
+    ]);
 
-    return data;
+    return tasks;
   } catch (error) {
     return error.message;
   }
@@ -32,10 +32,10 @@ const getRandomNumberedTasks = async (length, type) => {
 const getTasksByUserId = async (req, res) => {
   try {
     const { userId } = req.params;
-    // if (!validator.isValidObjectId(userId))
-    return res
-      .status(400)
-      .send({ status: false, message: "Please provide valid ID" });
+    if (!userId)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please provide valid ID" });
 
     const Tasks = await TaskModel.find({ taskAddUserId: userId });
 
