@@ -82,32 +82,29 @@ const insertTask = async (req, res) => {
 
 const insertTaskBulk = async (req, res) => {
   try {
-    let errTasks = [],
-      successTasks = [];
-
     const body = req.body;
     if (!body)
       return res
         .status(400)
         .send({ status: false, message: "Please provide valid body params." });
 
-    await body.forEach(async (item, index) => {
-      const oldTask = await TaskModel.find({ taskName: item.taskName });
-      if (oldTask) errTasks.push(item);
-      else {
-        const Task = await TaskModel.create(item);
-        if (Task) successTasks.push(item);
-        else errTasks.push(item);
+    body.forEach(async (item, index) => {
+      try {
+        const oldTask = await TaskModel.find({ taskName: item.taskName });
+        if (!oldTask || oldTask.length === 0) {
+          const Task = await TaskModel.create(item);
+        }
+      } catch (error) {
+        console.log("item: " + item.taskDesc + " error: " + error);
       }
     });
 
     return res.status(200).send({
       status: true,
       message: "Tasks added successfully.",
-      successTasks: successTasks,
-      errorTasks: errTasks,
     });
   } catch (error) {
+    console.log();
     return res.status(500).send({ status: false, message: error.message });
   }
 };

@@ -20,6 +20,8 @@ const mongoURL =
     ? process.env.MONGO_URL_PROD
     : process.env.MONGO_URL_DEV;
 
+console.log(mongoURL);
+
 mongoose.set("strictQuery", false);
 mongoose
   .connect(mongoURL, {
