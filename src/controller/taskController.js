@@ -64,7 +64,8 @@ const getTaskById = async (req, res) => {
 const insertTask = async (req, res) => {
   try {
     const data = req.body;
-    const oldTask = await TaskModel.find({ taskName: data.taskName });
+    const oldTask = await TaskModel.findOne({ taskName: data.taskName });
+
     if (oldTask)
       return res.status(400).send({
         status: false,
@@ -72,7 +73,7 @@ const insertTask = async (req, res) => {
       });
 
     const Task = await TaskModel.create(data);
-
+    console.log(Task);
     return res
       .status(200)
       .send({ status: true, message: "Task added successfully." });
