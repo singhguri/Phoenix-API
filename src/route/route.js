@@ -8,6 +8,7 @@ const roomController = require("../controller/roomController");
 router.post("/api/loginByOAuth", userController.loginByOAuth);
 router.post("/api/changeUserCoins", userController.changeUserCoins);
 router.get("/api/OAuthUsers", userController.getOAuthUsers);
+router.put("/api/OAuthUsers/:userId", userController.updateOAuthUsers);
 router.get("/api/OAuthUsers/:userId", userController.getOAuthUserById);
 router.delete("/api/OAuthUsers/:userId", userController.deleteOauthUser);
 
@@ -17,7 +18,6 @@ router.get("/api/tasks/:id", taskController.getTaskById);
 router.get("/api/tasks/:userId", taskController.getTasksByUserId);
 router.post("/api/tasks", taskController.insertTask);
 router.post("/api/tasks/bulk", taskController.insertTaskBulk);
-
 router.put("/api/tasks/:id", taskController.updateTask);
 router.delete("/api/tasks/:id", taskController.deleteTask);
 

@@ -45,9 +45,9 @@ const loginByOAuth = async (req, res) => {
         message: "Email is not verified, Please Verify before logging in.",
       });
 
-    const oldUser = UserModel.find({ email: reqBody.email });
+    const count = UserModel.find({ email: reqBody.email }).count();
 
-    if (oldUser)
+    if (count > 0)
       return res.status(200).send({
         status: true,
         message: "User Exists. Please log in.",
@@ -88,6 +88,26 @@ const getOAuthUserById = async (req, res) => {
       return res.status(400).send({
         status: false,
         message: "Invalid request parameters, Please provide valid userId.",
+      });
+  } catch (error) {
+    res.status(500).send({ status: false, message: error.message });
+  }
+};
+
+const updateOAuthUsers = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { body } = req.body;
+    if (userId && body) {
+      const user = await UserModel.findOneAndUpdate({ id: userId }, { body });
+      return res
+        .status(200)
+        .send({ status: true, message: "user updated successfully." });
+    } else
+      return res.status(400).send({
+        status: false,
+        message:
+          "Invalid request parameters, Please provide valid parameters and/or body.",
       });
   } catch (error) {
     res.status(500).send({ status: false, message: error.message });
@@ -151,6 +171,7 @@ const changeUserCoins = async (req, res) => {
 module.exports = {
   loginByOAuth,
   getOAuthUsers,
+  updateOAuthUsers,
   getOAuthUserById,
   deleteOauthUser,
   changeUserCoins,
