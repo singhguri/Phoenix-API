@@ -98,9 +98,12 @@ const updateOAuthUsers = async (req, res) => {
   try {
     const { userId } = req.params;
     const reqBody = req.body;
-    console.log(userId, reqBody);
+
     if (userId && reqBody) {
-      // const user = await UserModel.findOneAndUpdate({ id: userId }, { reqBody });
+      const user = await UserModel.findOneAndUpdate(
+        { id: userId },
+        { reqBody }
+      );
       return res
         .status(200)
         .send({ status: true, message: "user updated successfully." });
