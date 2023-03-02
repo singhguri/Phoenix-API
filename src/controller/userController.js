@@ -45,7 +45,7 @@ const loginByOAuth = async (req, res) => {
         message: "Email is not verified, Please Verify before logging in.",
       });
 
-    const user = UserModel.find({ email: reqBody.email });
+    const user = await UserModel.findOne({ email: reqBody.email });
 
     if (user)
       return res.status(200).send({

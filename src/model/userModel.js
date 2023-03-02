@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema(
     },
     userName: {
       type: String,
+      default: "",
       required: false,
       trim: true,
     },
@@ -59,6 +60,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
+      default: "",
       required: false,
     },
     // password: {
