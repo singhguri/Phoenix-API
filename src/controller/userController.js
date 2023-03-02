@@ -46,8 +46,8 @@ const loginByOAuth = async (req, res) => {
       });
 
     const count = UserModel.find({ email: reqBody.email }).count();
-    console.log(count);
-    if (count > 0)
+
+    if (count && count > 0)
       return res.status(200).send({
         status: true,
         message: "User Exists. Please log in.",
@@ -61,7 +61,7 @@ const loginByOAuth = async (req, res) => {
         .send({ status: true, message: "User first log in successful." });
     }
   } catch (error) {
-    console.log(reqBody + ", error: " + error.message);
+    console.log(req.body + ", error: " + error.message);
     res.status(500).send({ status: false, message: error.message });
   }
 };
