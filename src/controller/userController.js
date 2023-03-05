@@ -102,8 +102,9 @@ const updateOAuthUsers = async (req, res) => {
     if (userId && reqBody) {
       const user = await UserModel.findOneAndUpdate(
         { id: userId },
-        { reqBody }
+        { $set: reqBody }
       );
+
       return res
         .status(200)
         .send({ status: true, message: "user updated successfully." });
