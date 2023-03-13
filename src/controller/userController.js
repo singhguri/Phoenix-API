@@ -122,10 +122,7 @@ const updateOAuthUsers = async (req, res) => {
 const deleteOauthUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const user = await UserModel.findOneAndUpdate(
-      { id: userId },
-      { isActive: false }
-    );
+    const user = await UserModel.findOneAndDelete({ id: userId });
 
     res.status(200).send({
       status: true,
