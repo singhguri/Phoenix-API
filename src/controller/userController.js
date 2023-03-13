@@ -129,6 +129,7 @@ const deleteOauthUser = async (req, res) => {
       message: "User Deleted successfully.",
     });
   } catch (error) {
+    console.log(req.params + ", error: " + error.message);
     res.status(500).send({ status: false, message: error.message });
   }
 };
