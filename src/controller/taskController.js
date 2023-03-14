@@ -19,7 +19,12 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
       {
         $match: {
           $and: [
-            { taskType: { $and: [{ $eq: smallType }, { $eq: "both" }] } },
+            {
+              $or: [
+                { taskType: { $eq: smallType } },
+                { taskType: { $eq: "both" } },
+              ],
+            },
             { taskSize: { $eq: "small" } },
           ],
         },
@@ -31,7 +36,12 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
       {
         $match: {
           $and: [
-            { taskType: { $and: [{ $eq: bigType }, { $eq: "both" }] } },
+            {
+              $or: [
+                { taskType: { $eq: bigType } },
+                { taskType: { $eq: "both" } },
+              ],
+            },
             { taskSize: { $eq: "big" } },
           ],
         },
