@@ -19,7 +19,7 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
       {
         $match: {
           $and: [
-            { taskType: { $ne: smallType } },
+            { taskType: { $and: [{ $eq: smallType }, { $eq: "both" }] } },
             { taskSize: { $eq: "small" } },
           ],
         },
@@ -30,7 +30,10 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
     const bigTasks = await TaskModel.aggregate([
       {
         $match: {
-          $and: [{ taskType: { $ne: bigType } }, { taskSize: { $eq: "big" } }],
+          $and: [
+            { taskType: { $and: [{ $eq: bigType }, { $eq: "both" }] } },
+            { taskSize: { $eq: "big" } },
+          ],
         },
       },
       { $sample: { size: bigLen } },
