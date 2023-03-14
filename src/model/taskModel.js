@@ -32,6 +32,11 @@ const taskSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       required: false,
     },
+    lang: {
+      type: String,
+      required: false,
+      default: "en",
+    },
   },
   { timestamps: true }
 );

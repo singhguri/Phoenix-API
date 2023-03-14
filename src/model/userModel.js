@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema(
     profileImage: {
       type: String,
       required: false,
+      default: "",
     },
     source: {
       type: String,
@@ -63,10 +64,6 @@ const userSchema = new mongoose.Schema(
       default: "",
       required: false,
     },
-    // password: {
-    //   type: String,
-    //   required: true,
-    // }, // encrypted password
   },
   { timestamps: true }
 );

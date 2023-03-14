@@ -19,6 +19,10 @@ const roomSchema = new mongoose.Schema(
       type: [Object],
       required: false,
     },
+    bigTasks: {
+      type: [Object],
+      required: false,
+    },
     requiredCoins: {
       type: Number,
       required: false,

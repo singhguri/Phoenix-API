@@ -51,6 +51,7 @@ const loginByOAuth = async (req, res) => {
       return res.status(200).send({
         status: true,
         message: "User Exists. Please log in.",
+        data: user,
       });
     else {
       const data = { source: "OAuth", ...reqBody };

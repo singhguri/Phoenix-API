@@ -12,18 +12,31 @@ const getAllTasks = async (req, res) => {
   }
 };
 
-const getRandomNumberedTasks = async (length, type) => {
+const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
   try {
+    console.log(smallLen, bigLen, smallType, bigType);
     const tasks = await TaskModel.aggregate([
       {
         $match: {
-          taskType: { $ne: type },
+          $and: [
+            { taskType: { $ne: smallType } },
+            { taskSize: { $eq: "small" } },
+          ],
         },
       },
-      { $sample: { size: length } },
+      { $sample: { size: smallLen } },
     ]);
 
-    return tasks;
+    const bigTasks = await TaskModel.aggregate([
+      {
+        $match: {
+          $and: [{ taskType: { $ne: bigType } }, { taskSize: { $eq: "big" } }],
+        },
+      },
+      { $sample: { size: bigLen } },
+    ]);
+
+    return [tasks, bigTasks];
   } catch (error) {
     return error.message;
   }
