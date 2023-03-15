@@ -175,6 +175,19 @@ const deleteTask = async (req, res) => {
   }
 };
 
+const deleteTaskBulk = async (req, res) => {
+  try {
+    const Task = await TaskModel.deleteMany({});
+
+    return res
+      .status(200)
+      .send({ status: true, message: "All Tasks deleted successfully." });
+  } catch (error) {
+    console.log(req.body + ", error: " + error.message);
+    return res.status(500).send({ status: false, message: error.message });
+  }
+};
+
 module.exports = {
   getAllTasks,
   getRandomNumberedTasks,
@@ -184,4 +197,5 @@ module.exports = {
   insertTaskBulk,
   updateTask,
   deleteTask,
+  deleteTaskBulk,
 };

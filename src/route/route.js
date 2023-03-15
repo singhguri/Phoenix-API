@@ -20,6 +20,7 @@ router.post("/api/tasks", taskController.insertTask);
 router.post("/api/tasks/bulk", taskController.insertTaskBulk);
 router.put("/api/tasks/:id", taskController.updateTask);
 router.delete("/api/tasks/:id", taskController.deleteTask);
+router.delete("/api/tasks/all", taskController.deleteTaskBulk);
 
 // RoomModel APIs
 router.get("/api/rooms", roomController.getAllRooms);
