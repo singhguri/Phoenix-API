@@ -59,7 +59,11 @@ const loginByOAuth = async (req, res) => {
       const user = await UserModel.create(data);
       return res
         .status(201)
-        .send({ status: true, message: "User first log in successful." });
+        .send({
+          status: true,
+          message: "User first log in successful.",
+          data: user,
+        });
     }
   } catch (error) {
     console.log(req.body + ", error: " + error.message);
