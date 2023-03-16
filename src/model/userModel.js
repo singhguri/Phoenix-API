@@ -54,6 +54,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: true,
     },
+    isAdmin: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     coins: {
       type: Number,
       required: false,
