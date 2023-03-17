@@ -48,7 +48,7 @@ const adminLogin = async (req, res) => {
     if (!validateEmail(body.email))
       return res.status(400).send({ status: false, message: "Invalid email." });
 
-    const user = await UserModel.find({
+    const user = await UserModel.findOne({
       isAdmin: true,
       email: body.email,
       password: encryptWithAES(body.password),
