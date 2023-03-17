@@ -5,6 +5,7 @@ const taskController = require("../controller/taskController");
 const roomController = require("../controller/roomController");
 
 // UserModel APIs
+router.post("/api/login", userController.adminLogin);
 router.post("/api/loginByOAuth", userController.loginByOAuth);
 router.post("/api/changeUserCoins", userController.changeUserCoins);
 router.get("/api/OAuthUsers", userController.getOAuthUsers);

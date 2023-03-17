@@ -116,11 +116,15 @@ const insertTaskBulk = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Please provide valid body params." });
 
-    body.forEach(async (item, index) => {
+    await body.forEach(async (item, index) => {
       try {
         const oldTask = await TaskModel.find({ taskName: item.taskName });
         if (!oldTask || oldTask.length === 0) {
-          const Task = await TaskModel.create(item);
+          const newTask = {
+            taskSize: item.isSmallTask ? "small" : "big",
+            ...item,
+          };
+          const Task = await TaskModel.create(newTask);
         }
       } catch (error) {
         console.log("item: " + item.taskDesc + " error: " + error);

@@ -30,6 +30,45 @@ const validateNumber = (number) => {
     );
 };
 
+const adminLogin = async (req, res) => {
+  try {
+    const body = req.body;
+    if (!validateEmail(body.email))
+      return res.status(400).send({ status: false, message: "Invalid email." });
+
+    const user = await UserModel.find({
+      isAdmin: true,
+      email: body.email,
+      password: body.password,
+    });
+
+    if (!user)
+      return res.status(400).send({
+        status: true,
+        message: "User does not Exist.",
+      });
+
+    const token = jwt.sign(
+      {
+        userId: user.id,
+        iat: Math.floor(Date.now() / 1000),
+        exp: Math.floor(Date.now() / 1000) + 10 * 60,
+      },
+      process.env.JWT_SECRET
+    );
+
+    return res.status(200).send({
+      status: true,
+      message: "Logged in successfully.",
+      data: user,
+      token: token,
+    });
+  } catch (error) {
+    console.log(req.body + ", error: " + error.message);
+    return res.status(500).send({ status: false, message: error.message });
+  }
+};
+
 const loginByOAuth = async (req, res) => {
   try {
     const reqBody = req.body;
@@ -57,13 +96,11 @@ const loginByOAuth = async (req, res) => {
       const data = { source: "OAuth", ...reqBody };
 
       const user = await UserModel.create(data);
-      return res
-        .status(201)
-        .send({
-          status: true,
-          message: "User first log in successful.",
-          data: user,
-        });
+      return res.status(201).send({
+        status: true,
+        message: "User first log in successful.",
+        data: user,
+      });
     }
   } catch (error) {
     console.log(req.body + ", error: " + error.message);
@@ -177,6 +214,7 @@ const changeUserCoins = async (req, res) => {
 };
 
 module.exports = {
+  adminLogin,
   loginByOAuth,
   getOAuthUsers,
   updateOAuthUsers,
