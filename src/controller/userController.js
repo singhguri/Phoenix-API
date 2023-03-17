@@ -1,7 +1,7 @@
 const UserModel = require("../model/userModel");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const CryptoJS = require("crypto-js");
+const bcrypt = require("bcrypt");
 
 //name validation name can only contain [a-z], [A-Z]and space
 const validateName = (name) => {
@@ -30,18 +30,6 @@ const validateNumber = (number) => {
     );
 };
 
-const encryptWithAES = (text) => {
-  const passphrase = process.env.PASSWORD_PASSPHRASE;
-  return CryptoJS.AES.encrypt(text, passphrase).toString();
-};
-
-const decryptWithAES = (ciphertext) => {
-  const passphrase = process.env.PASSWORD_PASSPHRASE;
-  const bytes = CryptoJS.AES.decrypt(ciphertext, passphrase);
-  const originalText = bytes.toString(CryptoJS.enc.Utf8);
-  return originalText;
-};
-
 const adminLogin = async (req, res) => {
   try {
     const body = req.body;
@@ -51,13 +39,22 @@ const adminLogin = async (req, res) => {
     const user = await UserModel.findOne({
       isAdmin: true,
       email: body.email,
-      password: encryptWithAES(body.password),
     });
+
+    console.log(user);
 
     if (!user)
       return res.status(400).send({
         status: true,
         message: "User does not Exist.",
+      });
+
+    const verifyPassword = await bcrypt.compare(body.password, user.password);
+
+    if (!verifyPassword)
+      return res.status(400).send({
+        status: true,
+        message: "Invalid password.",
       });
 
     const token = jwt.sign(
@@ -106,9 +103,10 @@ const loginByOAuth = async (req, res) => {
       });
     else {
       let pass = "";
-      if (reqBody.password) pass = "";
+      if (reqBody.password)
+        reqBody.password = await bcrypt.hash(reqBody.password, 10);
 
-      const data = { password: pass, source: "OAuth", ...reqBody };
+      const data = { source: "OAuth", ...reqBody };
 
       const user = await UserModel.create(data);
       return res.status(201).send({
