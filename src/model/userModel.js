@@ -69,9 +69,18 @@ const userSchema = new mongoose.Schema(
       default: "",
       required: false,
     },
+    salt: {
+      type: String,
+      required: false,
+    },
     password: {
       type: String,
       required: false,
+    },
+    role: {
+      type: Number,
+      required: false,
+      default: 2,
     },
   },
   { timestamps: true }
