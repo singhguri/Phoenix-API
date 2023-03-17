@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema(
   {
     id: {
       type: String,
-      required: true,
+      required: false,
       unique: true,
     },
     family_name: {
@@ -54,7 +54,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: true,
     },
-    isAdmin: {
+    isAdminUser: {
       type: Boolean,
       required: true,
       default: false,
