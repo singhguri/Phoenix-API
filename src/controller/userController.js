@@ -1,7 +1,7 @@
 const UserModel = require("../model/userModel");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto-js");
+const CryptoJS = require("crypto-js");
 
 //name validation name can only contain [a-z], [A-Z]and space
 const validateName = (name) => {
