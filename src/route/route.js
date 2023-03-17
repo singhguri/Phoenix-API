@@ -1,11 +1,19 @@
 const express = require("express");
 const router = express.Router();
 const userController = require("../controller/userController");
+const adminUserController = require("../controller/adminUserController");
 const taskController = require("../controller/taskController");
 const roomController = require("../controller/roomController");
+const settingController = require("../controller/settingController");
+
+// SettingModel APIs
+router.get("/api/settings/:userId", settingController.getAllSettingsByUserId);
+
+// AdminUserModel APIs
+router.post("/api/OAuthUsers", adminUserController.addOAuthUsers);
+router.post("/api/login", adminUserController.adminLogin);
 
 // UserModel APIs
-router.post("/api/login", userController.adminLogin);
 router.post("/api/loginByOAuth", userController.loginByOAuth);
 router.post("/api/changeUserCoins", userController.changeUserCoins);
 router.get("/api/OAuthUsers", userController.getOAuthUsers);

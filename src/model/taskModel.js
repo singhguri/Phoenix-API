@@ -29,7 +29,7 @@ const taskSchema = new mongoose.Schema(
       default: "small",
     },
     taskAddUserId: {
-      type: mongoose.Types.ObjectId,
+      type: String,
       required: false,
     },
     lang: {

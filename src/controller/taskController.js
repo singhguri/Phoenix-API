@@ -12,9 +12,15 @@ const getAllTasks = async (req, res) => {
   }
 };
 
-const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
+const getRandomNumberedTasks = async (
+  smallLen,
+  bigLen,
+  smallType,
+  bigType,
+  lang
+) => {
   try {
-    console.log(smallLen, bigLen, smallType, bigType);
+    console.log(smallLen, bigLen, smallType, bigType, lang);
     const tasks = await TaskModel.aggregate([
       {
         $match: {
@@ -26,6 +32,7 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
               ],
             },
             { taskSize: { $eq: "small" } },
+            { lang: { $eq: lang } },
           ],
         },
       },
@@ -43,6 +50,7 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
               ],
             },
             { taskSize: { $eq: "big" } },
+            { lang: { $eq: lang } },
           ],
         },
       },

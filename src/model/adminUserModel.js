@@ -1,21 +1,11 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema(
+const adminUserSchema = new mongoose.Schema(
   {
     id: {
       type: String,
       required: false,
       unique: true,
-    },
-    family_name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    given_name: {
-      type: String,
-      required: true,
-      trim: true,
     },
     userName: {
       type: String,
@@ -34,19 +24,14 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       trim: true,
     },
-    verified_email: {
-      type: Boolean,
-      require: true,
-    },
-    profileImage: {
-      type: String,
-      required: false,
-      default: "",
-    },
     source: {
       type: String,
       required: true,
       default: "system",
+    },
+    verified_email: {
+      type: Boolean,
+      require: true,
     },
     isActive: {
       type: Boolean,
@@ -55,22 +40,8 @@ const userSchema = new mongoose.Schema(
     },
     isAdminUser: {
       type: Boolean,
-      required: true,
+      required: false,
       default: false,
-    },
-    coins: {
-      type: Number,
-      required: false,
-      default: 0,
-    },
-    gender: {
-      type: String,
-      default: "",
-      required: false,
-    },
-    salt: {
-      type: String,
-      required: false,
     },
     password: {
       type: String,
@@ -85,4 +56,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model("User", userSchema);
+module.exports = mongoose.model("adminUser", adminUserSchema);

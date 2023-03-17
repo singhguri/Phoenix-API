@@ -66,7 +66,8 @@ const createRoom = async (req, res) => {
       body.taskNo,
       body.bigTaskNo,
       body.taskType,
-      body.bigTaskType
+      body.bigTaskType,
+      body.lang
     );
 
     const roomInfo = await RoomModel.create({
