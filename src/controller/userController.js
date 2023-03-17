@@ -45,7 +45,7 @@ const adminLogin = async (req, res) => {
 
     if (!user)
       return res.status(400).send({
-        status: true,
+        status: false,
         message: "User does not Exist.",
       });
 
@@ -53,7 +53,7 @@ const adminLogin = async (req, res) => {
 
     if (!verifyPassword)
       return res.status(400).send({
-        status: true,
+        status: false,
         message: "Invalid password.",
       });
 
