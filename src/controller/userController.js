@@ -1,6 +1,6 @@
 const UserModel = require("../model/userModel");
 const mongoose = require("mongoose");
-
+const jwt = requie("jsonwebtoken");
 //--------------------------------------------------------------------------------------------------------------------------------------
 
 //name validation name can only contain [a-z], [A-Z]and space
