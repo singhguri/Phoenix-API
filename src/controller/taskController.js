@@ -2,7 +2,7 @@ const TaskModel = require("../model/taskModel");
 
 const getAllTasks = async (req, res) => {
   try {
-    const Tasks = await TaskModel.find({ lang: "en" });
+    const Tasks = await TaskModel.find({});
 
     return res
       .status(200)
