@@ -10,7 +10,8 @@ const settingController = require("../controller/settingController");
 router.get("/api/settings/:userId", settingController.getAllSettingsByUserId);
 
 // AdminUserModel APIs
-router.post("/api/OAuthUsers", adminUserController.addOAuthUsers);
+router.post("/api/adminUsers", adminUserController.addAdminUser);
+router.get("/api/adminUsers", adminUserController.getAdminUsers);
 router.post("/api/login", adminUserController.adminLogin);
 
 // UserModel APIs

@@ -1,8 +1,9 @@
 const jwt = require("jsonwebtoken");
 const AdminUserModel = require("../model/adminUserModel");
 const { validateEmail } = require("./userController");
+const bcrypt = require("bcrypt");
 
-const addOAuthUsers = async (req, res) => {
+const addAdminUser = async (req, res) => {
   try {
     const reqBody = req.body;
     if (!reqBody)
@@ -47,10 +48,21 @@ const addOAuthUsers = async (req, res) => {
   }
 };
 
+const getAdminUsers = async (req, res) => {
+  try {
+    const users = await AdminUserModel.find({});
+    return res.status(200).send({
+      status: true,
+      message: users,
+    });
+  } catch (error) {
+    return res.status(500).send({ status: false, message: error.message });
+  }
+};
+
 const adminLogin = async (req, res) => {
   try {
     const body = req.body;
-    console.log(body + "body");
 
     if (!validateEmail(body.email))
       return res.status(400).send({ status: false, message: "Invalid email." });
@@ -58,8 +70,6 @@ const adminLogin = async (req, res) => {
     const user = await AdminUserModel.findOne({
       email: body.email,
     });
-
-    console.log(user + "user");
 
     if (!user)
       return res.status(400).send({
@@ -98,5 +108,6 @@ const adminLogin = async (req, res) => {
 
 module.exports = {
   adminLogin,
-  addOAuthUsers,
+  addAdminUser,
+  getAdminUsers,
 };
