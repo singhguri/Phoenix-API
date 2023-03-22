@@ -19,7 +19,7 @@ const taskSchema = new mongoose.Schema(
     },
     taskTiming: {
       type: Number,
-      required: true,
+      required: false,
       default: 10,
       trim: true,
     },

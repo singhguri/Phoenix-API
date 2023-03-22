@@ -72,7 +72,7 @@ const adminLogin = async (req, res) => {
     });
 
     if (!user)
-      return res.status(400).send({
+      return res.status(200).send({
         status: false,
         message: "User does not Exist.",
       });
@@ -80,7 +80,7 @@ const adminLogin = async (req, res) => {
     const verifyPassword = await bcrypt.compare(body.password, user.password);
 
     if (!verifyPassword)
-      return res.status(400).send({
+      return res.status(200).send({
         status: false,
         message: "Invalid password.",
       });
