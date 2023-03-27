@@ -5,12 +5,12 @@ const { getRandomNumberedTasks } = require("./taskController");
 const getAllRooms = async (req, res) => {
   try {
     const rooms = await RoomModel.find({});
-    res.status(200).send({
+    return res.status(200).send({
       status: true,
       message: rooms,
     });
   } catch (error) {
-    res.status(500).send({ status: false, message: error.message });
+    return res.status(500).send({ status: false, message: error.message });
   }
 };
 
@@ -22,14 +22,14 @@ const getRoomById = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Please provide valid room Id..." });
 
-    const room = await RoomModel.find({ id: roomId });
+    const room = await RoomModel.findOne({ id: roomId });
 
-    res.status(200).send({
+    return res.status(200).send({
       status: true,
       message: room,
     });
   } catch (error) {
-    res.status(500).send({ status: false, message: error.message });
+    return res.status(500).send({ status: false, message: error.message });
   }
 };
 
@@ -43,12 +43,12 @@ const deleteRoom = async (req, res) => {
 
     const room = await RoomModel.deleteOne({ id: roomId });
 
-    res.status(200).send({
+    return res.status(200).send({
       status: true,
       message: "Room deleted successfully...",
     });
   } catch (error) {
-    res.status(500).send({ status: false, message: error.message });
+    return res.status(500).send({ status: false, message: error.message });
   }
 };
 
@@ -62,28 +62,38 @@ const createRoom = async (req, res) => {
 
     const body = req.body;
 
-    const [randTasks, bigTasks] = await getRandomNumberedTasks(
+    const [
+      randTasks,
+      bigTasks,
+      langTasks,
+      langBigTasks,
+    ] = await getRandomNumberedTasks(
       body.taskNo,
       body.bigTaskNo,
       body.taskType,
-      body.bigTaskType,
-      body.lang
+      body.bigTaskType
     );
 
     const roomInfo = await RoomModel.create({
       hostUserId: body.hostUserId,
       id: body.roomId,
-      tasks: randTasks,
-      bigTasks: bigTasks,
+      enTasks: {
+        tasks: randTasks,
+        bigTasks: bigTasks,
+      },
+      frTasks: {
+        tasks: langTasks,
+        bigTasks: langBigTasks,
+      },
     });
 
-    res.status(200).send({
+    return res.status(200).send({
       status: true,
       message: roomInfo,
     });
   } catch (error) {
     console.log(req.body);
-    res.status(500).send({ status: false, message: error.message });
+    return res.status(500).send({ status: false, message: error.message });
   }
 };
 

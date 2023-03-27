@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controller/userController");
 const adminUserController = require("../controller/adminUserController");
 const taskController = require("../controller/taskController");
+const frTaskController = require("../controller/frTaskController");
 const roomController = require("../controller/roomController");
 const settingController = require("../controller/settingController");
 
@@ -23,6 +24,7 @@ router.get("/api/OAuthUsers/:userId", userController.getOAuthUserById);
 router.delete("/api/OAuthUsers/:userId", userController.deleteOauthUser);
 
 // TaskModel APIs
+router.get("/api/all-tasks", taskController.getAllLangTasks);
 router.get("/api/tasks", taskController.getAllTasks);
 router.get("/api/tasks/:id", taskController.getTaskById);
 router.get("/api/tasks/:userId", taskController.getTasksByUserId);
@@ -31,6 +33,16 @@ router.post("/api/tasks/bulk", taskController.insertTaskBulk);
 router.put("/api/tasks/:id", taskController.updateTask);
 router.delete("/api/tasks/:id", taskController.deleteTask);
 router.delete("/api/tasks", taskController.deleteTaskBulk);
+
+// Fr-TaskModel APIs
+router.get("/api/fr-tasks", frTaskController.getAllTasks);
+router.get("/api/fr-tasks/:id", frTaskController.getTaskById);
+router.get("/api/fr-tasks/:userId", frTaskController.getTasksByUserId);
+router.post("/api/fr-tasks", frTaskController.insertTask);
+router.post("/api/fr-tasks/bulk", frTaskController.insertTaskBulk);
+router.put("/api/fr-tasks/:id", frTaskController.updateTask);
+router.delete("/api/fr-tasks/:id", frTaskController.deleteTask);
+router.delete("/api/fr-tasks", frTaskController.deleteTaskBulk);
 
 // RoomModel APIs
 router.get("/api/rooms", roomController.getAllRooms);

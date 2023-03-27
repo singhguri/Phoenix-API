@@ -15,12 +15,12 @@ const roomSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    tasks: {
-      type: [Object],
+    enTasks: {
+      type: mongoose.Schema.Types.Mixed,
       required: false,
     },
-    bigTasks: {
-      type: [Object],
+    frTasks: {
+      type: mongoose.Schema.Types.Mixed,
       required: false,
     },
     requiredCoins: {

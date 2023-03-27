@@ -1,27 +1,12 @@
-const TaskModel = require("../model/taskModel");
 const FrTaskModel = require("../model/frTaskModel");
-const fetch = require("node-fetch");
-
-const getAllLangTasks = async (req, res) => {
-  try {
-    let Tasks = [];
-    Tasks.push(...(await TaskModel.find({})));
-    Tasks.push(...(await FrTaskModel.find({})));
-
-    return res
-      .status(200)
-      .send({ status: true, count: Tasks.length, message: Tasks });
-  } catch (error) {
-    return res.status(500).send({ status: false, message: error.message });
-  }
-};
+const TaskModel = require("../model/taskModel");
 
 const getAllTasks = async (req, res) => {
   try {
     const query = req.query;
     let Tasks = [];
 
-    Tasks = query ? await TaskModel.find(query) : await TaskModel.find({});
+    Tasks = query ? await FrTaskModel.find(query) : await FrTaskModel.find({});
 
     return res
       .status(200)
@@ -31,111 +16,9 @@ const getAllTasks = async (req, res) => {
   }
 };
 
-// const getEnglishTasks = async ({ smallLen, bigLen, smallType, bigType }) => {
-//   const tasks = await TaskModel.aggregate([
-//     {
-//       $match: {
-//         $and: [
-//           {
-//             $or: [
-//               { taskType: { $eq: smallType } },
-//               { taskType: { $eq: "both" } },
-//             ],
-//           },
-//           { taskSize: { $eq: "small" } },
-//           // { lang: { $eq: "en" } },
-//         ],
-//       },
-//     },
-//     { $sample: { size: smallLen } },
-//   ]);
-
-//   const bigTasks = await TaskModel.aggregate([
-//     {
-//       $match: {
-//         $and: [
-//           {
-//             $or: [
-//               { taskType: { $eq: bigType } },
-//               { taskType: { $eq: "both" } },
-//             ],
-//           },
-//           { taskSize: { $eq: "big" } },
-//           // { lang: { $eq: "en" } },
-//         ],
-//       },
-//     },
-//     { $sample: { size: bigLen } },
-//   ]);
-
-//   const smallTaskIds = tasks.map((x) => x._id);
-//   const bigTaskIds = bigTasks.map((x) => x._id);
-
-//   const langTasks = await FrTaskModel.find({
-//     enTaskId: { $in: smallTaskIds },
-//   });
-
-//   const langBigTasks = await FrTaskModel.find({
-//     enTaskId: { $in: bigTaskIds },
-//   });
-
-//   return [tasks, bigTasks, langTasks, langBigTasks];
-// };
-
-// const getFrenchTasks = async ({ smallLen, bigLen, smallType, bigType }) => {
-//   const tasks = await FrTaskModel.aggregate([
-//     {
-//       $match: {
-//         $and: [
-//           {
-//             $or: [
-//               { taskType: { $eq: smallType } },
-//               { taskType: { $eq: "both" } },
-//             ],
-//           },
-//           { taskSize: { $eq: "small" } },
-//           // { lang: { $eq: "fr" } },
-//         ],
-//       },
-//     },
-//     { $sample: { size: smallLen } },
-//   ]);
-
-//   const bigTasks = await FrTaskModel.aggregate([
-//     {
-//       $match: {
-//         $and: [
-//           {
-//             $or: [
-//               { taskType: { $eq: bigType } },
-//               { taskType: { $eq: "both" } },
-//             ],
-//           },
-//           { taskSize: { $eq: "big" } },
-//           // { lang: { $eq: "fr" } },
-//         ],
-//       },
-//     },
-//     { $sample: { size: bigLen } },
-//   ]);
-
-//   const smallTaskIds = tasks.map((x) => x.enTaskId);
-//   const bigTaskIds = bigTasks.map((x) => x.enTaskId);
-
-//   const langTasks = await TaskModel.find({
-//     _id: { $in: smallTaskIds },
-//   });
-
-//   const langBigTasks = await TaskModel.find({
-//     _id: { $in: bigTaskIds },
-//   });
-
-//   return [tasks, bigTasks, langTasks, langBigTasks];
-// };
-
 const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
   try {
-    const tasks = await TaskModel.aggregate([
+    const tasks = await FrTaskModel.aggregate([
       {
         $match: {
           $and: [
@@ -153,7 +36,7 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
       { $sample: { size: smallLen } },
     ]);
 
-    const bigTasks = await TaskModel.aggregate([
+    const bigTasks = await FrTaskModel.aggregate([
       {
         $match: {
           $and: [
@@ -182,7 +65,7 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
       enTaskId: { $in: bigTaskIds },
     });
 
-    // sorting the arrays
+    // sorting
     tasks.sort((a, b) => a._id - b._id);
     bigTasks.sort((a, b) => a._id - b._id);
     langTasks.sort((a, b) => a._id - b._id);
@@ -202,7 +85,7 @@ const getTasksByUserId = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Please provide valid ID" });
 
-    const Tasks = await TaskModel.find({ taskAddUserId: userId });
+    const Tasks = await FrTaskModel.find({ taskAddUserId: userId });
 
     return res.status(200).send({ status: true, message: Tasks });
   } catch (error) {
@@ -218,11 +101,7 @@ const getTaskById = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Please provide valid ID" });
 
-    const Task = await TaskModel.findById(id);
-
-    const frTask = await FrTaskModel.find({ enTaskId: Task._id });
-
-    console.log(frTask);
+    const Task = await FrTaskModel.findById(id);
 
     return res.status(200).send({ status: true, message: Task });
   } catch (error) {
@@ -233,7 +112,7 @@ const getTaskById = async (req, res) => {
 const insertTask = async (req, res) => {
   try {
     const data = req.body;
-    const oldTask = await TaskModel.findOne({ taskName: data.taskName });
+    const oldTask = await FrTaskModel.findOne({ taskName: data.taskName });
 
     if (oldTask)
       return res.status(400).send({
@@ -241,12 +120,10 @@ const insertTask = async (req, res) => {
         message: "Task with same name already exists.",
       });
 
-    const Task = await TaskModel.create(data);
-
-    // send request to python translator API to translate to french
+    // send request to python translator API to translate to english
     (async () => {
       const rawResponse = await fetch(
-        process.env.PYTHON_TRANSLATE_API_BASE + "fr",
+        process.env.PYTHON_TRANSLATE_API_BASE + "en",
         {
           method: "POST",
           headers: {
@@ -258,16 +135,20 @@ const insertTask = async (req, res) => {
       const resp = await rawResponse.json();
 
       if (resp.status) {
-        const frTask = resp.message;
+        const task = resp.message;
 
-        const oldTask = await FrTaskModel.findOne({
-          taskName: frTask.taskName,
+        // check if the task already exists
+        const oldTask = await TaskModel.findOne({
+          taskName: task.taskName,
         });
 
         if (!oldTask) {
+          // add new english task
+          const Task = await TaskModel.create(task);
+          const frTask = { enTaskId: Task._id, ...data };
+
           // add new french task
-          frTask.enTaskId = Task._id;
-          const Task = await FrTaskModel.create(frTask);
+          const frNewTask = await FrTaskModel.create(data);
         }
       }
     })();
@@ -282,7 +163,7 @@ const insertTask = async (req, res) => {
 
 const insertTaskViaBulk = async (data) => {
   try {
-    const oldTask = await TaskModel.findOne({ taskName: data.taskName });
+    const oldTask = await FrTaskModel.findOne({ taskName: data.taskName });
 
     if (oldTask)
       return res.status(400).send({
@@ -290,12 +171,10 @@ const insertTaskViaBulk = async (data) => {
         message: "Task with same name already exists.",
       });
 
-    const Task = await TaskModel.create(data);
-
-    // send request to python translator API to translate to french
+    // send request to python translator API to translate to english
     (async () => {
       const rawResponse = await fetch(
-        process.env.PYTHON_TRANSLATE_API_BASE + "fr",
+        process.env.PYTHON_TRANSLATE_API_BASE + "en",
         {
           method: "POST",
           headers: {
@@ -307,16 +186,20 @@ const insertTaskViaBulk = async (data) => {
       const resp = await rawResponse.json();
 
       if (resp.status) {
-        const frTask = resp.message;
+        const task = resp.message;
 
-        const oldTask = await FrTaskModel.findOne({
-          taskName: frTask.taskName,
+        // check if the task already exists
+        const oldTask = await TaskModel.findOne({
+          taskName: task.taskName,
         });
 
         if (!oldTask) {
+          // add new english task
+          const Task = await TaskModel.create(task);
+          const frTask = { enTaskId: Task._id, ...data };
+
           // add new french task
-          frTask.enTaskId = Task._id;
-          const Task = await FrTaskModel.create(frTask);
+          const frNewTask = await FrTaskModel.create(data);
         }
       }
     })();
@@ -366,7 +249,7 @@ const updateTask = async (req, res) => {
 
     const data = req.body;
 
-    const Task = await TaskModel.findByIdAndUpdate(id, data);
+    const Task = await FrTaskModel.findByIdAndUpdate(id, data);
 
     return res
       .status(200)
@@ -384,7 +267,7 @@ const deleteTask = async (req, res) => {
         .status(400)
         .send({ status: false, message: "Please provide valid ID" });
 
-    const Task = await TaskModel.findByIdAndDelete(id);
+    const Task = await FrTaskModel.findByIdAndDelete(id);
 
     return res
       .status(200)
@@ -396,7 +279,7 @@ const deleteTask = async (req, res) => {
 
 const deleteTaskBulk = async (req, res) => {
   try {
-    const Task = await TaskModel.deleteMany({});
+    const Task = await FrTaskModel.deleteMany({});
 
     return res
       .status(200)
@@ -408,7 +291,6 @@ const deleteTaskBulk = async (req, res) => {
 };
 
 module.exports = {
-  getAllLangTasks,
   getAllTasks,
   getRandomNumberedTasks,
   getTasksByUserId,
