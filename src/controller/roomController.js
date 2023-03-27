@@ -1,6 +1,7 @@
 const RoomModel = require("../model/roomModel");
 const mongoose = require("mongoose");
 const { getRandomNumberedTasks } = require("./taskController");
+const CreateRoomViaSocket = require("../middleware/ioSocket");
 
 const getAllRooms = async (req, res) => {
   try {
@@ -97,9 +98,24 @@ const createRoom = async (req, res) => {
   }
 };
 
+const createRoomSocket = async (req, res) => {
+  try {
+    CreateRoomViaSocket();
+
+    return res.status(200).send({
+      status: true,
+      message: roomInfo,
+    });
+  } catch (error) {
+    console.log(req.body);
+    return res.status(500).send({ status: false, message: error.message });
+  }
+};
+
 module.exports = {
   createRoom,
   getAllRooms,
   getRoomById,
   deleteRoom,
+  createRoomSocket,
 };

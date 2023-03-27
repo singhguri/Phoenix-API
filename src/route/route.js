@@ -49,6 +49,7 @@ router.get("/api/rooms", roomController.getAllRooms);
 router.post("/api/room/create", roomController.createRoom);
 router.get("/api/room/:roomId", roomController.getRoomById);
 router.delete("/api/room/:roomId", roomController.deleteRoom);
+router.post("/api/room/create-socket-room", roomController.create);
 
 // if api is invalid OR wrong URL
 router.all("/**", function (req, res) {
