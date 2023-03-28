@@ -150,7 +150,9 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
         },
       },
       { $sample: { size: smallLen } },
-    ]);
+    ])
+      .sort({ _id: 1 })
+      .exec();
 
     const bigTasks = await TaskModel.aggregate([
       {
@@ -167,24 +169,30 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
         },
       },
       { $sample: { size: bigLen } },
-    ]);
+    ])
+      .sort({ _id: 1 })
+      .exec();
 
     const smallTaskIds = tasks.map((x) => x._id);
     const bigTaskIds = bigTasks.map((x) => x._id);
 
     const langTasks = await FrTaskModel.find({
       enTaskId: { $in: smallTaskIds },
-    });
+    })
+      .sort({ enTaskId: 1 })
+      .exec();
 
     const langBigTasks = await FrTaskModel.find({
       enTaskId: { $in: bigTaskIds },
-    });
+    })
+      .sort({ enTaskId: 1 })
+      .exec();
 
-    // sorting the arrays
-    tasks.sort((a, b) => a._id - b._id);
-    bigTasks.sort((a, b) => a._id - b._id);
-    langTasks.sort((a, b) => a.enTaskId - b.enTaskId);
-    langBigTasks.sort((a, b) => a.enTaskId - b.enTaskId);
+    // // sorting the arrays
+    // tasks.sort((a, b) => a._id - b._id);
+    // bigTasks.sort((a, b) => a._id - b._id);
+    // langTasks.sort((a, b) => a.enTaskId - b.enTaskId);
+    // langBigTasks.sort((a, b) => a.enTaskId - b.enTaskId);
 
     return [tasks, bigTasks, langTasks, langBigTasks];
   } catch (error) {
