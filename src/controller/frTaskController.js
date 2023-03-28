@@ -68,8 +68,8 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
     // sorting
     tasks.sort((a, b) => a._id - b._id);
     bigTasks.sort((a, b) => a._id - b._id);
-    langTasks.sort((a, b) => a._id - b._id);
-    langBigTasks.sort((a, b) => a._id - b._id);
+    langTasks.sort((a, b) => a.enTaskId - b.enTaskId);
+    langBigTasks.sort((a, b) => a.enTaskId - b.enTaskId);
 
     return [tasks, bigTasks, langTasks, langBigTasks];
   } catch (error) {
