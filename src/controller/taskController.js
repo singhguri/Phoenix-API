@@ -37,9 +37,10 @@ const getAllTasks = async (req, res) => {
 const getRandomAdminTasks = async (smallLen, bigLen, smallType, bigType) => {
   try {
     // get admin user
-    const adminUser = AdminUserModel.findOne({ role: Roles.ADMIN });
+    const adminUser = await AdminUserModel.findOne({ role: Roles.ADMIN });
     // get english tasks from adminUserTasks
-    const enTasks = adminUser.tasks.map((item) => {
+    const adminUserTasks = adminUser.tasks;
+    const enTasks = adminUserTasks.map((item) => {
       if (item.lang === "en") return item.taskName;
     });
 
@@ -120,7 +121,8 @@ const getRandomNumberedTasks = async (
     if (!adminUser) return [];
 
     // get english tasks from adminUserTasks
-    const enTasks = adminUser.tasks.map((item) => {
+    const adminUserTasks = adminUser.tasks;
+    const enTasks = adminUserTasks.map((item) => {
       if (item.lang === "en") return item.taskName;
     });
 
