@@ -34,6 +34,77 @@ const getAllTasks = async (req, res) => {
   }
 };
 
+const getRandomAdminTasks = async (smallLen, bigLen, smallType, bigType) => {
+  try {
+    // get admin user
+    const adminUser = AdminUserModel.findOne({ role: Roles.ADMIN });
+    // get english tasks from adminUserTasks
+    const enTasks = adminUser.tasks.map((item) => {
+      if (item.lang === "en") return item.taskName;
+    });
+
+    const tasks = await TaskModel.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              $or: [
+                { taskType: { $eq: smallType } },
+                { taskType: { $eq: "both" } },
+              ],
+            },
+            { taskSize: { $eq: "small" } },
+            { taskName: { $in: enTasks } },
+          ],
+        },
+      },
+      { $sample: { size: smallLen } },
+    ])
+      .sort({ _id: 1 })
+      .exec();
+
+    const bigTasks = await TaskModel.aggregate([
+      {
+        $match: {
+          $and: [
+            {
+              $or: [
+                { taskType: { $eq: bigType } },
+                { taskType: { $eq: "both" } },
+              ],
+            },
+            { taskSize: { $eq: "big" } },
+            { taskName: { $in: enTasks } },
+          ],
+        },
+      },
+      { $sample: { size: bigLen } },
+    ])
+      .sort({ _id: 1 })
+      .exec();
+
+    const smallTaskIds = tasks.map((x) => x._id);
+    const bigTaskIds = bigTasks.map((x) => x._id);
+
+    // french tasks
+    const langTasks = await FrTaskModel.find({
+      enTaskId: { $in: smallTaskIds },
+    })
+      .sort({ enTaskId: 1 })
+      .exec();
+
+    const langBigTasks = await FrTaskModel.find({
+      enTaskId: { $in: bigTaskIds },
+    })
+      .sort({ enTaskId: 1 })
+      .exec();
+
+    return [tasks, bigTasks, langTasks, langBigTasks];
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getRandomNumberedTasks = async (
   smallLen,
   bigLen,
@@ -43,14 +114,13 @@ const getRandomNumberedTasks = async (
 ) => {
   try {
     const user = await UserModel.findOne({ id: userId });
-    if (!user) return [];
+    if (!user) return getRandomAdminTasks(smallLen, bigLen, smallType, bigType);
 
     const adminUser = await AdminUserModel.findOne({ email: user.email });
     if (!adminUser) return [];
 
-    const adminUserTasks = adminUser.tasks;
     // get english tasks from adminUserTasks
-    const enTasks = adminUserTasks.map((item) => {
+    const enTasks = adminUser.tasks.map((item) => {
       if (item.lang === "en") return item.taskName;
     });
 
@@ -111,12 +181,6 @@ const getRandomNumberedTasks = async (
       .sort({ enTaskId: 1 })
       .exec();
 
-    // // sorting the arrays
-    // tasks.sort((a, b) => a._id - b._id);
-    // bigTasks.sort((a, b) => a._id - b._id);
-    // langTasks.sort((a, b) => a.enTaskId - b.enTaskId);
-    // langBigTasks.sort((a, b) => a.enTaskId - b.enTaskId);
-
     return [tasks, bigTasks, langTasks, langBigTasks];
   } catch (error) {
     return error.message;
@@ -144,15 +208,6 @@ const getTasksByUserId = async (req, res) => {
 
     Tasks.push(...(await TaskModel.find({ taskName: { $in: enTaskNames } })));
     Tasks.push(...(await FrTaskModel.find({ taskName: { $in: frTaskNames } })));
-
-    // Tasks.push(
-    //   ...(await TaskModel.find({ taskAddUserId: { $exists: false } }))
-    // );
-    // Tasks.push(
-    //   ...(await FrTaskModel.find({ taskAddUserId: { $exists: false } }))
-    // );
-    // Tasks.push(...(await TaskModel.find({ taskAddUserId: userId })));
-    // Tasks.push(...(await FrTaskModel.find({ taskAddUserId: userId })));
 
     return res.status(200).send({ status: true, message: Tasks });
   } catch (error) {
