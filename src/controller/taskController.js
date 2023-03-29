@@ -1,6 +1,9 @@
 const TaskModel = require("../model/taskModel");
 const FrTaskModel = require("../model/frTaskModel");
 const fetch = require("node-fetch");
+const AdminUserModel = require("../model/adminUserModel");
+const UserModel = require("../model/userModel");
+const { Roles } = require("../validator/validator");
 
 const getAllLangTasks = async (req, res) => {
   try {
@@ -31,110 +34,27 @@ const getAllTasks = async (req, res) => {
   }
 };
 
-// const getEnglishTasks = async ({ smallLen, bigLen, smallType, bigType }) => {
-//   const tasks = await TaskModel.aggregate([
-//     {
-//       $match: {
-//         $and: [
-//           {
-//             $or: [
-//               { taskType: { $eq: smallType } },
-//               { taskType: { $eq: "both" } },
-//             ],
-//           },
-//           { taskSize: { $eq: "small" } },
-//           // { lang: { $eq: "en" } },
-//         ],
-//       },
-//     },
-//     { $sample: { size: smallLen } },
-//   ]);
-
-//   const bigTasks = await TaskModel.aggregate([
-//     {
-//       $match: {
-//         $and: [
-//           {
-//             $or: [
-//               { taskType: { $eq: bigType } },
-//               { taskType: { $eq: "both" } },
-//             ],
-//           },
-//           { taskSize: { $eq: "big" } },
-//           // { lang: { $eq: "en" } },
-//         ],
-//       },
-//     },
-//     { $sample: { size: bigLen } },
-//   ]);
-
-//   const smallTaskIds = tasks.map((x) => x._id);
-//   const bigTaskIds = bigTasks.map((x) => x._id);
-
-//   const langTasks = await FrTaskModel.find({
-//     enTaskId: { $in: smallTaskIds },
-//   });
-
-//   const langBigTasks = await FrTaskModel.find({
-//     enTaskId: { $in: bigTaskIds },
-//   });
-
-//   return [tasks, bigTasks, langTasks, langBigTasks];
-// };
-
-// const getFrenchTasks = async ({ smallLen, bigLen, smallType, bigType }) => {
-//   const tasks = await FrTaskModel.aggregate([
-//     {
-//       $match: {
-//         $and: [
-//           {
-//             $or: [
-//               { taskType: { $eq: smallType } },
-//               { taskType: { $eq: "both" } },
-//             ],
-//           },
-//           { taskSize: { $eq: "small" } },
-//           // { lang: { $eq: "fr" } },
-//         ],
-//       },
-//     },
-//     { $sample: { size: smallLen } },
-//   ]);
-
-//   const bigTasks = await FrTaskModel.aggregate([
-//     {
-//       $match: {
-//         $and: [
-//           {
-//             $or: [
-//               { taskType: { $eq: bigType } },
-//               { taskType: { $eq: "both" } },
-//             ],
-//           },
-//           { taskSize: { $eq: "big" } },
-//           // { lang: { $eq: "fr" } },
-//         ],
-//       },
-//     },
-//     { $sample: { size: bigLen } },
-//   ]);
-
-//   const smallTaskIds = tasks.map((x) => x.enTaskId);
-//   const bigTaskIds = bigTasks.map((x) => x.enTaskId);
-
-//   const langTasks = await TaskModel.find({
-//     _id: { $in: smallTaskIds },
-//   });
-
-//   const langBigTasks = await TaskModel.find({
-//     _id: { $in: bigTaskIds },
-//   });
-
-//   return [tasks, bigTasks, langTasks, langBigTasks];
-// };
-
-const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
+const getRandomNumberedTasks = async (
+  smallLen,
+  bigLen,
+  smallType,
+  bigType,
+  userId
+) => {
   try {
+    const user = await UserModel.findOne({ id: userId });
+    if (!user) return [];
+
+    const adminUser = await AdminUserModel.findOne({ email: user.email });
+    if (!adminUser) return [];
+
+    const adminUserTasks = adminUser.tasks;
+    // get english tasks from adminUserTasks
+    const enTasks = adminUserTasks.map((item) => {
+      if (item.lang === "en") return item.taskName;
+    });
+
+    // english tasks
     const tasks = await TaskModel.aggregate([
       {
         $match: {
@@ -146,6 +66,7 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
               ],
             },
             { taskSize: { $eq: "small" } },
+            { taskName: { $in: enTasks } },
           ],
         },
       },
@@ -165,6 +86,7 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
               ],
             },
             { taskSize: { $eq: "big" } },
+            { taskName: { $in: enTasks } },
           ],
         },
       },
@@ -176,6 +98,7 @@ const getRandomNumberedTasks = async (smallLen, bigLen, smallType, bigType) => {
     const smallTaskIds = tasks.map((x) => x._id);
     const bigTaskIds = bigTasks.map((x) => x._id);
 
+    // french tasks
     const langTasks = await FrTaskModel.find({
       enTaskId: { $in: smallTaskIds },
     })
@@ -205,10 +128,31 @@ const getTasksByUserId = async (req, res) => {
     const { userId } = req.params;
     if (!userId)
       return res
-        .status(400)
+        .status(200)
         .send({ status: false, message: "Please provide valid ID" });
 
-    const Tasks = await TaskModel.find({ taskAddUserId: userId });
+    let Tasks = [];
+    const user = await AdminUserModel.findOne({ id: userId });
+
+    const enTaskNames = user.tasks.map((item) => {
+      if (item.lang === "en") return item.taskName;
+    });
+
+    const frTaskNames = user.tasks.map((item) => {
+      if (item.lang === "fr") return item.taskName;
+    });
+
+    Tasks.push(...(await TaskModel.find({ taskName: { $in: enTaskNames } })));
+    Tasks.push(...(await FrTaskModel.find({ taskName: { $in: frTaskNames } })));
+
+    // Tasks.push(
+    //   ...(await TaskModel.find({ taskAddUserId: { $exists: false } }))
+    // );
+    // Tasks.push(
+    //   ...(await FrTaskModel.find({ taskAddUserId: { $exists: false } }))
+    // );
+    // Tasks.push(...(await TaskModel.find({ taskAddUserId: userId })));
+    // Tasks.push(...(await FrTaskModel.find({ taskAddUserId: userId })));
 
     return res.status(200).send({ status: true, message: Tasks });
   } catch (error) {
@@ -221,7 +165,7 @@ const getTaskById = async (req, res) => {
     const { id } = req.params;
     if (!id)
       return res
-        .status(400)
+        .status(200)
         .send({ status: false, message: "Please provide valid ID" });
 
     const Task = await TaskModel.findById(id);
@@ -242,13 +186,12 @@ const insertTask = async (req, res) => {
     const oldTask = await TaskModel.findOne({ taskName: data.taskName });
 
     if (oldTask)
-      return res.status(400).send({
+      return res.status(200).send({
         status: false,
         message: "Task with same name already exists.",
       });
 
-    const Task = await TaskModel.create(data);
-
+    // translate task to french & save to french tasks table
     // send request to python translator API to translate to french
     (async () => {
       const rawResponse = await fetch(
@@ -262,7 +205,7 @@ const insertTask = async (req, res) => {
         }
       );
       const resp = await rawResponse.json();
-
+      console.log(res);
       if (resp.status) {
         const frTask = resp.message;
 
@@ -270,17 +213,49 @@ const insertTask = async (req, res) => {
           taskName: frTask.taskName,
         });
 
+        console.log(oldTask);
+
         if (!oldTask) {
+          // add task to english tasks table
+          const Task = await TaskModel.create(data);
+
           // add new french task
           frTask.enTaskId = Task._id;
-          const Task = await FrTaskModel.create(frTask);
+          const FrTask = await FrTaskModel.create(frTask);
+
+          // update tasks of the user
+          const adminUser = await AdminUserModel.findOne({
+            id: data.taskAddUserId,
+          });
+
+          let userTasks = adminUser.tasks;
+
+          userTasks = [
+            ...userTasks,
+            {
+              isAdminTask: adminUser.role === Roles.ADMIN,
+              lang: "en",
+              taskName: Task.taskName,
+            },
+            {
+              isAdminTask: adminUser.role === Roles.ADMIN,
+              lang: "fr",
+              taskName: FrTask.taskName,
+            },
+          ];
+
+          const newAdminUser = await AdminUserModel.findOneAndUpdate(
+            { id: data.taskAddUserId },
+            { $set: { tasks: userTasks } },
+            { new: true }
+          );
+
+          return res
+            .status(200)
+            .send({ status: true, message: "Task added successfully." });
         }
       }
     })();
-
-    return res
-      .status(200)
-      .send({ status: true, message: "Task added successfully." });
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message });
   }
@@ -323,6 +298,30 @@ const insertTaskViaBulk = async (data) => {
           // add new french task
           frTask.enTaskId = Task._id;
           const Task = await FrTaskModel.create(frTask);
+
+          // update userTasks
+          const adminUser = await AdminUserModel.find({ id: data.userId });
+          let userTasks = adminUser.tasks;
+
+          userTasks = [
+            ...userTasks,
+            {
+              isAdminTask: adminUser.role === Roles.ADMIN,
+              lang: "en",
+              _id: Task._id,
+            },
+            {
+              isAdminTask: adminUser.role === Roles.ADMIN,
+              lang: "fr",
+              _id: frTask._id,
+            },
+          ];
+
+          const newAdminUser = await AdminUserModel.updateOne(
+            { id: data.userId },
+            { $set: { tasks: userTasks } },
+            { new: true }
+          );
         }
       }
     })();

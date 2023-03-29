@@ -42,6 +42,11 @@ const isValidPincode = (value) => {
   return /^[1-9][0-9]{5}$/.test(value);
 };
 
+const Roles = {
+  ADMIN: 1,
+  CLIENT: 2,
+};
+
 module.exports = {
   isValidObject,
   isValid,
@@ -52,4 +57,5 @@ module.exports = {
   isValidSize,
   isValidString,
   isValidPincode,
+  Roles,
 };

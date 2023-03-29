@@ -11,8 +11,18 @@ const settingController = require("../controller/settingController");
 router.get("/api/settings/:userId", settingController.getAllSettingsByUserId);
 
 // AdminUserModel APIs
-router.post("/api/adminUsers", adminUserController.addAdminUser);
 router.get("/api/adminUsers", adminUserController.getAdminUsers);
+router.get("/api/adminUsers/:userId", adminUserController.getAdminUserById);
+router.post("/api/adminUsers", adminUserController.addAdminUser);
+router.delete("/api/adminUsers/:userId", adminUserController.deleteAdminUser);
+router.put(
+  "/api/adminUser-tasks/:userId",
+  adminUserController.updateAdminUserTasks
+);
+router.post(
+  "/api/delete-adminUser-tasks",
+  adminUserController.deleteAdminUserTasks
+);
 router.post("/api/login", adminUserController.adminLogin);
 
 // UserModel APIs
@@ -27,7 +37,7 @@ router.delete("/api/OAuthUsers/:userId", userController.deleteOauthUser);
 router.get("/api/all-tasks", taskController.getAllLangTasks);
 router.get("/api/tasks", taskController.getAllTasks);
 router.get("/api/tasks/:id", taskController.getTaskById);
-router.get("/api/tasks/:userId", taskController.getTasksByUserId);
+router.get("/api/user-tasks/:userId", taskController.getTasksByUserId);
 router.post("/api/tasks", taskController.insertTask);
 router.post("/api/tasks/bulk", taskController.insertTaskBulk);
 router.put("/api/tasks/:id", taskController.updateTask);

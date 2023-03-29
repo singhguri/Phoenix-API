@@ -52,6 +52,10 @@ const adminUserSchema = new mongoose.Schema(
       required: false,
       default: 2,
     },
+    tasks: {
+      type: [Object],
+      required: false,
+    },
   },
   { timestamps: true }
 );

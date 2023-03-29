@@ -1,5 +1,6 @@
 const FrTaskModel = require("../model/frTaskModel");
 const TaskModel = require("../model/taskModel");
+const { Roles } = require("../validator/validator");
 
 const getAllTasks = async (req, res) => {
   try {
@@ -148,7 +149,31 @@ const insertTask = async (req, res) => {
           const frTask = { enTaskId: Task._id, ...data };
 
           // add new french task
-          const frNewTask = await FrTaskModel.create(data);
+          const frNewTask = await FrTaskModel.create(frTask);
+
+          // add in tasks of user
+          const adminUser = await AdminUserModel.find({ id: data.userId });
+          let userTasks = adminUser.tasks;
+
+          userTasks = [
+            ...userTasks,
+            {
+              isAdminTask: adminUser.role === Roles.ADMIN,
+              lang: "en",
+              _id: Task._id,
+            },
+            {
+              isAdminTask: adminUser.role === Roles.ADMIN,
+              lang: "fr",
+              _id: frNewTask._id,
+            },
+          ];
+
+          const newAdminUser = await AdminUserModel.updateOne(
+            { id: data.userId },
+            { $set: { tasks: userTasks } },
+            { new: true }
+          );
         }
       }
     })();
@@ -199,7 +224,31 @@ const insertTaskViaBulk = async (data) => {
           const frTask = { enTaskId: Task._id, ...data };
 
           // add new french task
-          const frNewTask = await FrTaskModel.create(data);
+          const frNewTask = await FrTaskModel.create(frTask);
+
+          // add in tasks of user
+          const adminUser = await AdminUserModel.find({ id: data.userId });
+          let userTasks = adminUser.tasks;
+
+          userTasks = [
+            ...userTasks,
+            {
+              isAdminTask: adminUser.role === Roles.ADMIN,
+              lang: "en",
+              _id: Task._id,
+            },
+            {
+              isAdminTask: adminUser.role === Roles.ADMIN,
+              lang: "fr",
+              _id: frNewTask._id,
+            },
+          ];
+
+          const newAdminUser = await AdminUserModel.updateOne(
+            { id: data.userId },
+            { $set: { tasks: userTasks } },
+            { new: true }
+          );
         }
       }
     })();
