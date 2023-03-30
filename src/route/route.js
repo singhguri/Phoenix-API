@@ -6,6 +6,7 @@ const taskController = require("../controller/taskController");
 const frTaskController = require("../controller/frTaskController");
 const roomController = require("../controller/roomController");
 const settingController = require("../controller/settingController");
+const couponController = require("../controller/couponController");
 
 // SettingModel APIs
 router.get("/api/settings/:userId", settingController.getAllSettingsByUserId);
@@ -59,6 +60,15 @@ router.get("/api/rooms", roomController.getAllRooms);
 router.post("/api/room/create", roomController.createRoom);
 router.get("/api/room/:roomId", roomController.getRoomById);
 router.delete("/api/room/:roomId", roomController.deleteRoom);
+
+// CouponModel APIs
+router.get("/api/coupons", couponController.getAllCoupons);
+router.post("/api/coupon/create", couponController.insertCoupon);
+router.delete("/api/coupon/:couponId", couponController.deleteCoupon);
+router.get(
+  "/api/updateCouponUsers/:couponId",
+  couponController.updateCouponUsers
+);
 
 // if api is invalid OR wrong URL
 router.all("/**", function (req, res) {

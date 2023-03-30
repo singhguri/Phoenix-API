@@ -32,4 +32,7 @@ const roomSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// delete room after 24 hours
+roomSchema.index({ createdAt: 1 }, { expireAfterSeconds: 86400 });
+
 module.exports = mongoose.model("Room", roomSchema);
