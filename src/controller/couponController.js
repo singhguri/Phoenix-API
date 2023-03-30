@@ -78,20 +78,28 @@ const insertCoupon = async (req, res) => {
 
 const deleteCoupon = async (req, res) => {
   try {
-    const { couponId } = req.params;
+    const { couponId, couponLang } = req.body;
     if (!couponId)
       return res.status(200).send({
         status: false,
         message: "Please provide valid coupon Id.",
       });
 
-    // delete french coupon
-    const frCoupon = await CouponModel.findOneAndDelete({
-      enCouponId: couponId,
-    });
-    // delete english coupon
-    const coupon = await CouponModel.findByIdAndDelete(couponId);
-
+    if (couponLang === "en") {
+      // delete french coupon
+      const frCoupon = await CouponModel.findOneAndDelete({
+        enCouponId: couponId,
+      });
+      // delete english coupon
+      const coupon = await CouponModel.findByIdAndDelete(couponId);
+    } else {
+      // find french coupon
+      const frCoupon = await CouponModel.findById(couponId);
+      // delete english coupon
+      const coupon = await CouponModel.findByIdAndDelete(frCoupon.enCouponId);
+      // delete french coupon
+      const deletedCoupon = await CouponModel.findByIdAndDelete(couponId);
+    }
     return res.status(200).send({
       status: true,
       message: "Coupon deleted successfully.",

@@ -64,7 +64,7 @@ router.delete("/api/room/:roomId", roomController.deleteRoom);
 // CouponModel APIs
 router.get("/api/coupons", couponController.getAllCoupons);
 router.post("/api/coupon/create", couponController.insertCoupon);
-router.delete("/api/coupon/:couponId", couponController.deleteCoupon);
+router.post("/api/coupon/delete", couponController.deleteCoupon);
 router.get(
   "/api/updateCouponUsers/:couponId",
   couponController.updateCouponUsers
