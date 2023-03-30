@@ -5,12 +5,12 @@ const couponSchema = new mongoose.Schema(
     name: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
     },
     description: {
       type: String,
       required: true,
+      unique: true,
     },
     price: {
       type: Number,
@@ -32,6 +32,15 @@ const couponSchema = new mongoose.Schema(
     logoImg: {
       type: String,
       required: true,
+    },
+    lang: {
+      type: String,
+      required: false,
+      default: "en",
+    },
+    enCouponId: {
+      type: mongoose.SchemaTypes.ObjectId,
+      required: false,
     },
   },
   { timestamps: true }

@@ -124,7 +124,7 @@ const insertTask = async (req, res) => {
     // send request to python translator API to translate to english
     (async () => {
       const rawResponse = await fetch(
-        process.env.PYTHON_TRANSLATE_API_BASE + "en",
+        process.env.PYTHON_TRANSLATE_API_BASE + "task/en",
         {
           method: "POST",
           headers: {
@@ -199,7 +199,7 @@ const insertTaskViaBulk = async (data) => {
     // send request to python translator API to translate to english
     (async () => {
       const rawResponse = await fetch(
-        process.env.PYTHON_TRANSLATE_API_BASE + "en",
+        process.env.PYTHON_TRANSLATE_API_BASE + "task/en",
         {
           method: "POST",
           headers: {

@@ -1,4 +1,5 @@
 const CouponModel = require("../model/couponModel");
+const fetch = require("node-fetch");
 
 const getAllCoupons = async (req, res) => {
   try {
@@ -22,12 +23,53 @@ const insertCoupon = async (req, res) => {
   try {
     const body = req.body;
 
-    const coupon = await CouponModel.create(body);
+    if (!body)
+      return res.status(200).send({
+        status: false,
+        message: "Please provide valid parameteres.",
+      });
 
-    return res.status(200).send({
-      status: true,
-      message: "Coupon added successfully.",
+    const existCoupon = await CouponModel.findOne({
+      description: body.description,
     });
+
+    if (existCoupon)
+      return res.status(200).send({
+        status: false,
+        message: "Coupon already exists.",
+      });
+
+    (async () => {
+      const rawResponse = await fetch(
+        process.env.PYTHON_TRANSLATE_API_BASE + "coupon/fr",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
+        }
+      );
+      const resp = await rawResponse.json();
+      console.log(resp);
+      if (resp.status) {
+        let FrCoupon = resp.message;
+
+        // create english coupon
+        const coupon = await CouponModel.create(body);
+
+        // console.log(coupon);
+
+        // create french coupon
+        FrCoupon = { ...FrCoupon, enCouponId: coupon._id };
+        const frcoupon = await CouponModel.create(FrCoupon);
+
+        return res.status(200).send({
+          status: true,
+          message: "Coupon added successfully.",
+        });
+      }
+    })();
   } catch (error) {
     console.log(error);
     return res.status(500).send({ status: false, message: error.message });
