@@ -146,7 +146,7 @@ const changeUserCoins = async (req, res) => {
   try {
     const { userCoins, userId, operation } = req.body;
     if (!userId || !userCoins || !operation)
-      res.status(400).send({
+      return res.status(200).send({
         status: false,
         message: "Invalid request parameters, Please provide all details.",
       });
