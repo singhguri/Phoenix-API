@@ -85,7 +85,12 @@ const deleteCoupon = async (req, res) => {
         message: "Please provide valid coupon Id.",
       });
 
-    const coupons = await CouponModel.findByIdAndDelete(couponId);
+    // delete french coupon
+    const frCoupon = await CouponModel.findOneAndDelete({
+      enCouponId: couponId,
+    });
+    // delete english coupon
+    const coupon = await CouponModel.findByIdAndDelete(couponId);
 
     return res.status(200).send({
       status: true,
