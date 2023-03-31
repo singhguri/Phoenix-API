@@ -38,21 +38,28 @@ const getRandomAdminTasks = async (smallLen, bigLen, smallType, bigType) => {
   try {
     // get admin user
     const adminUser = await AdminUserModel.findOne({ role: Roles.ADMIN });
+
     // get english tasks from adminUserTasks
     const adminUserTasks = adminUser.tasks;
     const enTasks = adminUserTasks.map((item) => {
       if (item.lang === "en") return item.taskName;
     });
 
+    const smallTaskTypeFilter = [
+      smallType !== "both" ? { taskType: { $eq: smallType } } : {},
+      { taskType: { $eq: "both" } },
+    ];
+    const bigTaskTypeFilter = [
+      smallType !== "both" ? { taskType: { $eq: smallType } } : {},
+      { taskType: { $eq: "both" } },
+    ];
+
     const tasks = await TaskModel.aggregate([
       {
         $match: {
           $and: [
             {
-              $or: [
-                { taskType: { $eq: smallType } },
-                { taskType: { $eq: "both" } },
-              ],
+              $or: smallTaskTypeFilter,
             },
             { taskSize: { $eq: "small" } },
             { taskName: { $in: enTasks } },
@@ -69,10 +76,7 @@ const getRandomAdminTasks = async (smallLen, bigLen, smallType, bigType) => {
         $match: {
           $and: [
             {
-              $or: [
-                { taskType: { $eq: bigType } },
-                { taskType: { $eq: "both" } },
-              ],
+              $or: bigTaskTypeFilter,
             },
             { taskSize: { $eq: "big" } },
             { taskName: { $in: enTasks } },
@@ -118,7 +122,8 @@ const getRandomNumberedTasks = async (
     if (!user) return getRandomAdminTasks(smallLen, bigLen, smallType, bigType);
 
     const adminUser = await AdminUserModel.findOne({ email: user.email });
-    if (!adminUser) return [];
+    if (!adminUser)
+      return getRandomAdminTasks(smallLen, bigLen, smallType, bigType);
 
     // get english tasks from adminUserTasks
     const adminUserTasks = adminUser.tasks;
