@@ -130,10 +130,36 @@ const updateCouponUsers = async (req, res) => {
       });
     } else {
       coupon.usersCount++;
-      // console.log(coupon);
-      const newCoupon = await CouponModel.findByIdAndUpdate(couponId, coupon, {
-        new: true,
-      });
+      const newCount = coupon.usersCount;
+      if (coupon.lang === "en") {
+        CouponModel.findOneAndUpdate(
+          { enCouponId: couponId },
+          { $set: { usersCount: newCount } },
+          { new: true }
+        );
+        const newCoupon = await CouponModel.findByIdAndUpdate(
+          couponId,
+          coupon,
+          {
+            new: true,
+          }
+        );
+      } else {
+        // update fr coupon
+        const newCoupon = await CouponModel.findByIdAndUpdate(
+          couponId,
+          coupon,
+          {
+            new: true,
+          }
+        );
+        // update en coupon
+        CouponModel.findByIdAndUpdate(
+          coupon.enCouponId,
+          { $set: { usersCount: newCount } },
+          { new: true }
+        );
+      }
     }
 
     return res.status(200).send({
