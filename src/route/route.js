@@ -20,6 +20,7 @@ router.put(
   "/api/adminUser-tasks/:userId",
   adminUserController.updateAdminUserTasks
 );
+router.put("/api/adminUser/:userId", adminUserController.updateAdminUser);
 router.post(
   "/api/delete-adminUser-tasks",
   adminUserController.deleteAdminUserTasks

@@ -37,7 +37,7 @@ const getAllTasks = async (req, res) => {
 const getRandomAdminTasks = async (smallLen, bigLen, smallType, bigType) => {
   try {
     // get admin user
-    const adminUser = await AdminUserModel.findOne({ role: Roles.ADMIN });
+    const adminUser = await AdminUserModel.findOne({ id: "1" });
 
     // get english tasks from adminUserTasks
     const adminUserTasks = adminUser.tasks;
@@ -50,7 +50,7 @@ const getRandomAdminTasks = async (smallLen, bigLen, smallType, bigType) => {
       { taskType: { $eq: "both" } },
     ];
     const bigTaskTypeFilter = [
-      smallType !== "both" ? { taskType: { $eq: smallType } } : {},
+      bigType !== "both" ? { taskType: { $eq: bigType } } : {},
       { taskType: { $eq: "both" } },
     ];
 

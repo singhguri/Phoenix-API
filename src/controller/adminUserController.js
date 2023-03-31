@@ -142,6 +142,33 @@ const updateAdminUserTasks = async (req, res) => {
   }
 };
 
+const updateAdminUser = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const body = req.body;
+
+    const user = await AdminUserModel.findOne({ id: userId });
+    if (!user)
+      return res.status(200).send({
+        status: false,
+        message: "Please provide valid Admin Id.",
+      });
+
+    const newUser = await AdminUserModel.updateOne(
+      { id: userId },
+      { $set: body },
+      { new: true }
+    );
+
+    return res.status(200).send({
+      status: true,
+      message: "Admin user updated successfully...",
+    });
+  } catch (error) {
+    return res.status(500).send({ status: false, message: error.message });
+  }
+};
+
 const deleteAdminUserTasks = async (req, res) => {
   try {
     const { userId, taskId, lang } = req.body;
@@ -240,6 +267,7 @@ module.exports = {
   deleteAdminUser,
   getAdminUsers,
   updateAdminUserTasks,
+  updateAdminUser,
   getAdminUserById,
   deleteAdminUserTasks,
 };
