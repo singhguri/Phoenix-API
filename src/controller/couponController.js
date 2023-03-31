@@ -132,11 +132,13 @@ const updateCouponUsers = async (req, res) => {
       coupon.usersCount++;
       const newCount = coupon.usersCount;
       if (coupon.lang === "en") {
-        CouponModel.findOneAndUpdate(
+        // update fr coupon
+        await CouponModel.findOneAndUpdate(
           { enCouponId: couponId },
           { $set: { usersCount: newCount } },
           { new: true }
         );
+        // update en coupon
         const newCoupon = await CouponModel.findByIdAndUpdate(
           couponId,
           coupon,
@@ -154,7 +156,7 @@ const updateCouponUsers = async (req, res) => {
           }
         );
         // update en coupon
-        CouponModel.findByIdAndUpdate(
+        await CouponModel.findByIdAndUpdate(
           coupon.enCouponId,
           { $set: { usersCount: newCount } },
           { new: true }
